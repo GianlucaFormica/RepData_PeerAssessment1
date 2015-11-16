@@ -2,7 +2,7 @@
 
 ## 1. Loading and preprocessing the data
 1.1. read the CSV file into a dataframe called Activity  
-assumption: activity.csv is in the working directory
+Assumptions: activity.csv is in the working directory and is unzipped
 
 ```r
 Activity<-read.csv("activity.csv")
@@ -15,7 +15,7 @@ load Dplyr, as this is used to group and summarise the dataframe
 suppressMessages(library(dplyr))
 ```
 
-2.1.1 use Dplyr to group the dataframe by the date coloum and store in variable tmp
+2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp
 
 ```r
 tmp<-dplyr::group_by(Activity, date) 
@@ -25,12 +25,12 @@ tmp<-dplyr::group_by(Activity, date)
 ```r
 tmp2<-dplyr::summarise_each(tmp, funs(mean))
 ```
-2.1.3 drop the third coloumn as not relevant 
+2.1.3 drop the third column as not relevant 
 
 ```r
 tmp2 <- tmp2[-3]
 ```
-2.1.4 change the coloumn names 
+2.1.4 change the column names 
 
 ```r
 colnames(tmp2)<-c("Date", "AvgStepsPerDay")
@@ -209,10 +209,10 @@ hist(Activity2$steps,
           breaks=30)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-12-1.png) 
+![](PA1_template_files/figure-html/histogram2-1.png) 
 
 ## 5. Are there differences in activity patterns between weekdays and weekends?
-5.1.1 find the day of a week in r
+5.1.1 find the day of the week in r
 
 ```r
 Activity2$day <- weekdays(as.Date(Activity$date))

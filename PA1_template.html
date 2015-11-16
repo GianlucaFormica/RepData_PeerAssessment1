@@ -66,20 +66,20 @@ img {
 
 <div id="loading-and-preprocessing-the-data" class="section level2">
 <h2>1. Loading and preprocessing the data</h2>
-<p>1.1. read the CSV file into a dataframe called Activity<br />assumption: activity.csv is in the working directory</p>
+<p>1.1. read the CSV file into a dataframe called Activity<br />Assumptions: activity.csv is in the working directory and is unzipped</p>
 <pre class="r"><code>Activity&lt;-read.csv(&quot;activity.csv&quot;)</code></pre>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
 <h2>2. What is mean total number of steps taken per day?</h2>
 <p>load Dplyr, as this is used to group and summarise the dataframe</p>
 <pre class="r"><code>suppressMessages(library(dplyr))</code></pre>
-<p>2.1.1 use Dplyr to group the dataframe by the date coloum and store in variable tmp</p>
+<p>2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp</p>
 <pre class="r"><code>tmp&lt;-dplyr::group_by(Activity, date) </code></pre>
 <p>2.1.2 take the mean of each the steps per day and store in variable tmp2</p>
 <pre class="r"><code>tmp2&lt;-dplyr::summarise_each(tmp, funs(mean))</code></pre>
-<p>2.1.3 drop the third coloumn as not relevant</p>
+<p>2.1.3 drop the third column as not relevant</p>
 <pre class="r"><code>tmp2 &lt;- tmp2[-3]</code></pre>
-<p>2.1.4 change the coloumn names</p>
+<p>2.1.4 change the column names</p>
 <pre class="r"><code>colnames(tmp2)&lt;-c(&quot;Date&quot;, &quot;AvgStepsPerDay&quot;)
 head(tmp2)</code></pre>
 <pre><code>## Source: local data frame [6 x 2]
@@ -182,7 +182,7 @@ head( Activity2)</code></pre>
 </div>
 <div id="are-there-differences-in-activity-patterns-between-weekdays-and-weekends" class="section level2">
 <h2>5. Are there differences in activity patterns between weekdays and weekends?</h2>
-<p>5.1.1 find the day of a week in r</p>
+<p>5.1.1 find the day of the week in r</p>
 <pre class="r"><code>Activity2$day &lt;- weekdays(as.Date(Activity$date))</code></pre>
 <p>5.1.2 group by day in variable tmp99</p>
 <pre class="r"><code>tmp9&lt;-dplyr::group_by(Activity2, day)

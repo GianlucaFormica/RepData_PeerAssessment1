@@ -7,7 +7,7 @@ output:
 
 ## 1. Loading and preprocessing the data
 1.1. read the CSV file into a dataframe called Activity  
-assumption: activity.csv is in the working directory
+Assumptions: activity.csv is in the working directory and is unzipped
 ````{r ,Loading, echo=TRUE}
 Activity<-read.csv("activity.csv")
 ````
