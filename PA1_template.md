@@ -1,36 +1,48 @@
 # Reproducible Research: Peer Assessment 1
 
-## 1. Loading and preprocessing the data
-1.1. read the CSV file into a dataframe called Activity  
-Assumptions: activity.csv is in the working directory and is unzipped
+## 1. Loading and preprocessing the data  
+
+###1.1. read the CSV file into a dataframe called Activity  
+
+Assumptions: activity.csv is in the working directory and is unzipped  
+
 
 ```r
 Activity<-read.csv("activity.csv")
 ```
 
-## 2. What is mean total number of steps taken per day?
-load Dplyr, as this is used to group and summarise the dataframe
+## 2. What is mean total number of steps taken per day?  
+
+load Dplyr, as this is used to group and summarise the dataframe  
+
 
 ```r
 suppressMessages(library(dplyr))
 ```
 
-2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp
+####2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp  
+
 
 ```r
 tmp<-dplyr::group_by(Activity, date) 
 ```
-2.1.2 take the mean of each the steps per day and store in variable tmp2
+
+####2.1.2 take the mean of each the steps per day and store in variable tmp2  
+
 
 ```r
 tmp2<-dplyr::summarise_each(tmp, funs(mean))
 ```
-2.1.3 drop the third column as not relevant 
+
+####2.1.3 drop the third column as not relevant   
+
 
 ```r
 tmp2 <- tmp2[-3]
 ```
-2.1.4 change the column names 
+
+####2.1.4 change the column names   
+
 
 ```r
 colnames(tmp2)<-c("Date", "AvgStepsPerDay")
@@ -48,7 +60,9 @@ head(tmp2)
 ## 5 2012-10-05       46.15972
 ## 6 2012-10-06       53.54167
 ```
-2.2 plot histogram of tmp2
+
+###2.2 plot histogram of tmp2  
+
 
 ```r
     hist(tmp2$AvgSteps, 
@@ -59,8 +73,10 @@ head(tmp2)
           breaks=20)
 ```
 
-![](PA1_template_files/figure-html/histogram-1.png) 
-2.3 Calaculate the Mean and the Median respectively 
+![](PA1_template_files/figure-html/histogram1-1.png) 
+
+###2.3 Calaculate the Mean and the Median respectively   
+
 
 ```r
 mean(Activity$steps,na.rm=TRUE)
@@ -78,15 +94,17 @@ median(Activity$steps,na.rm=TRUE)
 ## [1] 0
 ```
 
-## 3. What is the average daily activity pattern?
+## 3. What is the average daily activity pattern?  
 
-3.1.1 group the Activity dataframe by interval and store in new variable tmp3
+####3.1.1 group the Activity dataframe by interval and store in new variable tmp3  
+
 
 ```r
 tmp3<-dplyr::group_by(Activity, interval)
 ```
 
-3.1.2 take the mean of the steps interval and store in new variable tmp4 
+####3.1.2 take the mean of the steps interval and store in new variable tmp4   
+
 
 ```r
 tmp4<-dplyr::summarise_each(tmp3, funs(mean(., na.rm = TRUE)))
@@ -107,15 +125,17 @@ head(tmp4)
 ## 6       25           2.0943396
 ```
 
-3.1.3 plot time series
+####3.1.3 plot time series   
+
 
 ```r
 plot(tmp4, type="l")
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-7-1.png) 
+![](PA1_template_files/figure-html/Scatterplot -1.png) 
 
-3.2 find interval which has the maximum value
+###3.2 find interval which has the maximum value   
+
 
 ```r
 MaxSteps<-max(tmp4$AvgSteps)
@@ -131,8 +151,11 @@ for(i in 1:288)
 ```
 ## NULL
 ```
-## 4. Imputing missing values
-4.1 the number of  NAs is  values
+
+## 4. Imputing missing values  
+
+###4.1 the number of  NAs is  values  
+
 
 ```r
 sum(is.na(Activity$steps))
@@ -142,8 +165,10 @@ sum(is.na(Activity$steps))
 ## [1] 2304
 ```
 
-4.2 replace NAs with the average steps per interval over all days (this has already been claculated and stored in varibale tmp4)
-4.3.1 below code empliments the above strategy (i.e. 4.2)
+####4.2.1 replace all NAs with the average steps per interval over all days (this has already been claculated and stored in varibale tmp4).this is not perfect as latter it is shown that weekends and weekdays have different patterns.   
+
+####4.3.1 below code empliments the above strategy (i.e. 4.2)  
+
 
 ```r
 Activity2<-Activity
@@ -180,7 +205,9 @@ tail( Activity2)
 ## 17567 0.2264151 2012-11-30     2350
 ## 17568 1.0754717 2012-11-30     2355
 ```
-4.3.2 new mean and activity with NAs substituted with values taken for average steps per interval
+
+####4.3.2 new mean and activity with NAs substituted with values taken for average steps per interval  
+
 
 ```r
 mean(Activity2$steps)
@@ -198,7 +225,8 @@ median(Activity2$steps)
 ## [1] 0
 ```
 
-4.4 histogram
+###4.4 histogram  
+
 
 ```r
 hist(Activity2$steps, 
@@ -211,21 +239,25 @@ hist(Activity2$steps,
 
 ![](PA1_template_files/figure-html/histogram2-1.png) 
 
-## 5. Are there differences in activity patterns between weekdays and weekends?
-5.1.1 find the day of the week in r
+## 5. Are there differences in activity patterns between weekdays and weekends?  
+
+####5.1.1 find the day of the week in r  
+
 
 ```r
 Activity2$day <- weekdays(as.Date(Activity$date))
 ```
 
-5.1.2 group by day in variable tmp99   
+####5.1.2 group by day in variable tmp99  
+
 
 ```r
 tmp9<-dplyr::group_by(Activity2, day)
 tmp99<-tmp9
 ```
 
-5.1.3 classify days as weekend or weekday in new variable tmp99
+####5.1.3 classify days as weekend or weekday in new variable tmp99  
+
 
 ```r
 for(i in 1:17568)
@@ -260,7 +292,9 @@ head(tmp99)
 ## 6 2.0943396       25    Weekday
 ```
 
-5.2 Take the means of each variable per activity and per day  
+##5.2 Take the means of each variable per activity and per day  
+
+From the panel plot below it is clear that on weekend the average steps peaks earlier on (interval 500-1000) whereas on weekdays the average steps peaks latter (interval 1500 -1700)
 
 ```r
 library(lattice)
@@ -272,4 +306,4 @@ xyplot(AvgSteps~Interval|WeekEndDay,
            layout=c(1,2))
 ```
 
-![](PA1_template_files/figure-html/lattice-1.png) 
+![](PA1_template_files/figure-html/PanelPlot-1.png) 

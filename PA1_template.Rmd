@@ -5,38 +5,52 @@ output:
     keep_md: true
 ---
 
-## 1. Loading and preprocessing the data
-1.1. read the CSV file into a dataframe called Activity  
-Assumptions: activity.csv is in the working directory and is unzipped
+## 1. Loading and preprocessing the data  
+
+###1.1. read the CSV file into a dataframe called Activity  
+
+Assumptions: activity.csv is in the working directory and is unzipped  
+
 ````{r ,Loading, echo=TRUE}
 Activity<-read.csv("activity.csv")
 ````
 
-## 2. What is mean total number of steps taken per day?
-load Dplyr, as this is used to group and summarise the dataframe
+## 2. What is mean total number of steps taken per day?  
+
+load Dplyr, as this is used to group and summarise the dataframe  
+
 ````{r , LoadDplyr,echo=TRUE}
 suppressMessages(library(dplyr))
 ````
 
-2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp
+####2.1.1 use Dplyr to group the dataframe by the date column and store in variable tmp  
+
 ````{r ,groupByDate, echo=TRUE}
 tmp<-dplyr::group_by(Activity, date) 
 ````
-2.1.2 take the mean of each the steps per day and store in variable tmp2
-````{r ,echo=TRUE}
+
+####2.1.2 take the mean of each the steps per day and store in variable tmp2  
+
+````{r ,meanMedian1, echo=TRUE}
 tmp2<-dplyr::summarise_each(tmp, funs(mean))
 ````
-2.1.3 drop the third column as not relevant 
-````{r ,echo=TRUE}
+
+####2.1.3 drop the third column as not relevant   
+
+````{r,drop1 ,echo=TRUE}
 tmp2 <- tmp2[-3]
 ````
-2.1.4 change the column names 
-````{r ,echo=TRUE}
+
+####2.1.4 change the column names   
+
+````{r,addColnames1, ,echo=TRUE}
 colnames(tmp2)<-c("Date", "AvgStepsPerDay")
 head(tmp2)
 ````
-2.2 plot histogram of tmp2
-````{r, histogram,echo=TRUE}
+
+###2.2 plot histogram of tmp2  
+
+````{r, histogram1,echo=TRUE}
     hist(tmp2$AvgSteps, 
           main="Histogram of the total number of steps taken each day", 
           xlab = "total number of steps per day",
@@ -44,34 +58,40 @@ head(tmp2)
           col="green",
           breaks=20)
 ````
-2.3 Calaculate the Mean and the Median respectively 
-````{r ,echo=TRUE}
+
+###2.3 Calaculate the Mean and the Median respectively   
+
+````{r,meanMedian2,echo=TRUE}
 mean(Activity$steps,na.rm=TRUE)
 median(Activity$steps,na.rm=TRUE)
 ````
 
-## 3. What is the average daily activity pattern?
+## 3. What is the average daily activity pattern?  
 
-3.1.1 group the Activity dataframe by interval and store in new variable tmp3
-````{r ,echo=TRUE}
+####3.1.1 group the Activity dataframe by interval and store in new variable tmp3  
+
+````{r,byInterval, ,echo=TRUE}
 tmp3<-dplyr::group_by(Activity, interval)
 ````
 
-3.1.2 take the mean of the steps interval and store in new variable tmp4 
-````{r ,echo=TRUE}
+####3.1.2 take the mean of the steps interval and store in new variable tmp4   
+
+````{r,AvgStepsPerInterval,echo=TRUE}
 tmp4<-dplyr::summarise_each(tmp3, funs(mean(., na.rm = TRUE)))
 tmp4 <- tmp4[-3]
 colnames(tmp4)<-c("Interval", "AvgStepsPerInterval")
 head(tmp4)
 ````
 
-3.1.3 plot time series
-````{r ,echo=TRUE}
+####3.1.3 plot time series   
+
+````{r,Scatterplot ,echo=TRUE}
 plot(tmp4, type="l")
 ````
 
-3.2 find interval which has the maximum value
-````{r ,echo=TRUE}
+###3.2 find interval which has the maximum value   
+
+````{r,IntervalMaxSteps ,echo=TRUE}
 MaxSteps<-max(tmp4$AvgSteps)
 for(i in 1:288)
 {
@@ -81,15 +101,20 @@ for(i in 1:288)
          }
 }
 ````
-## 4. Imputing missing values
-4.1 the number of  NAs is  values
-````{r ,echo=TRUE}
+
+## 4. Imputing missing values  
+
+###4.1 the number of  NAs is  values  
+
+````{r,NAcount ,echo=TRUE}
 sum(is.na(Activity$steps))
 ````
 
-4.2 replace NAs with the average steps per interval over all days (this has already been claculated and stored in varibale tmp4)
-4.3.1 below code empliments the above strategy (i.e. 4.2)
-````{r ,echo=TRUE}
+####4.2.1 replace all NAs with the average steps per interval over all days (this has already been claculated and stored in varibale tmp4).this is not perfect as latter it is shown that weekends and weekdays have different patterns.   
+
+####4.3.1 below code empliments the above strategy (i.e. 4.2)  
+
+````{r,rmNA,echo=TRUE}
 Activity2<-Activity
 for(i in 1: 17568)
 {
@@ -101,13 +126,16 @@ for(i in 1: 17568)
 head( Activity2)
 tail( Activity2)
 ````
-4.3.2 new mean and activity with NAs substituted with values taken for average steps per interval
-````{r,meanMedian ,echo=TRUE}
+
+####4.3.2 new mean and activity with NAs substituted with values taken for average steps per interval  
+
+````{r,meanMedian3,echo=TRUE}
 mean(Activity2$steps)
 median(Activity2$steps)
 ````
 
-4.4 histogram
+###4.4 histogram  
+
 ````{r,histogram2,echo=TRUE}
 hist(Activity2$steps, 
           main="Histogram of the total number of steps taken each day",
@@ -117,19 +145,23 @@ hist(Activity2$steps,
           breaks=30)
 ````
 
-## 5. Are there differences in activity patterns between weekdays and weekends?
-5.1.1 find the day of the week in r
+## 5. Are there differences in activity patterns between weekdays and weekends?  
+
+####5.1.1 find the day of the week in r  
+
 ````{r,dayOfTheWeek,echo=TRUE}
 Activity2$day <- weekdays(as.Date(Activity$date))
 ````
 
-5.1.2 group by day in variable tmp99   
+####5.1.2 group by day in variable tmp99  
+
 ````{r,groupByDay ,echo=TRUE}
 tmp9<-dplyr::group_by(Activity2, day)
 tmp99<-tmp9
 ````
 
-5.1.3 classify days as weekend or weekday in new variable tmp99
+####5.1.3 classify days as weekend or weekday in new variable tmp99  
+
 ````{r,Weekend_Weekday ,echo=TRUE}
 for(i in 1:17568)
 {
@@ -151,8 +183,10 @@ colnames(tmp99)<-c("AvgSteps", "Interval", "WeekEndDay")
 head(tmp99)
 ````
 
-5.2 Take the means of each variable per activity and per day  
-````{r,lattice,echo=TRUE}
+##5.2 Take the means of each variable per activity and per day  
+
+From the panel plot below it is clear that on weekend the average steps peaks earlier on (interval 500-1000) whereas on weekdays the average steps peaks latter (interval 1500 -1700)
+````{r,PanelPlot,echo=TRUE}
 library(lattice)
 xyplot(AvgSteps~Interval|WeekEndDay, 
            data = tmp99,
